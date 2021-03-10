@@ -1,0 +1,104 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+ </head>
+ <body>
+  <script src="vue.js"></script>
+
+  <div id="app">
+    <h5>v-once v-text methods 変数 v-on:click</h5>
+    <p v-once>{{ message }}</p>
+    <p v-text="message"></p>
+    <p>{{ sayHi() }}</p>
+    <p>{{ number + 5 }}</p>
+    <p>{{ ok ? 'Yes' : 'NO' }}</p>
+    <button v-on:click="reverseMessage">メッセージ反転</button>
+    <br>
+
+    <h5>v-html</h5>
+    <div v-html="html"></div>
+    <br>
+
+    <h5>v-bind</h5>
+    <a v-bind:href="url">Google</a>
+    <a v-bind:[attribute]="url">Google</a>
+    <a v-bind="{href: urlTwitter, id: number}">Twitter</a>
+    <a v-bind="twitterObject">Twitter</a>
+    <br>
+
+    <h5>v-on イベントに対して関数実行</h5>
+    <!-- <p>現在{{ number }}回クリック</p>
+    <button v-on:click="countUp(1)">カウントアップ</button>
+    <button :[event]="countUp(2)">カウントアップ</button>
+    <button @click="countUp(2)">カウントアップ</button> -->
+
+    <p v-on:mousemove="changeMousePosition(3, $event)">マウスを乗せて
+      <span v-on:mousemove="noEvent">反応しないでください</span>
+      <span v-on:mousemove.stop="">反応しないでください</span>
+    </p>
+    <p>X:{{x}}, Y:{{y}}</p>
+    <a v-on:click.prevent.stop v-bind:href="url">Google</a>
+    <br>
+
+    <h5>キー修飾子</h5>
+    <input type="text" v-on:keyup.enter.space="myAlert">
+    <br>
+
+    <h5>v-model(相方向バインディング)</h5>
+    <input type="text" v-model="message">
+    <h1>{{ message }}</h1>
+
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        message: 'HelloWorld!',
+        number: 0,
+        ok: true,
+        html: '<h1>h１です</h1>',
+        url: 'https://google.com',
+        urlTwitter: 'https://twitter.com',
+        attribute: 'href',
+        twitterObject: {
+          href: "https://twitter.com",
+          id: 3
+        },
+        x: 0,
+        y: 0,
+        // event: 'click',
+      },
+      methods: {
+        reverseMessage: function() {
+          this.message = this.message.split('').reverse().join('')
+        },
+        sayHi: function() {
+          // 必ずthisをつける
+          this.message = 'Hello VueJS'
+          return this.message;
+        },
+        countUp: function(times) {
+          this.number += 1 * times
+        },
+        changeMousePosition: function(divideNumber, event) {
+          //console.log(event);
+          this.x = event.clientX / divideNumber;
+          this.y = event.clientY / divideNumber;
+        },
+        noEvent: function(event) {
+          // バブリングを止める
+          event.stopPropagation()
+        },
+        myAlert() {
+          alert('アラート！');
+        }
+      }
+    })
+  </script>
+ </body>
+ </html>
