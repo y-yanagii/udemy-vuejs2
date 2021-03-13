@@ -1,0 +1,90 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+ </head>
+ <body>
+  <script src="vue.js"></script>
+
+  <div id="app">
+    <h5>v-if v-else-if v-else</h5>
+    <p v-if="ok">OK!</p>
+    <p v-else-if="maybeOk">maybe OK!</p>
+    <p v-else>Not OK...</p>
+    <br>
+
+    <h5>template v-if</h5>
+    <template v-if="ok">
+      <p>Hello</p>
+      <p>Good Bye</p>
+      <p>おはよう</p>
+    </template>
+    <button @click="ok = !ok">ボタン</button>
+    <br>
+
+    <h5>v-show</h5>
+    <p v-if="ok">OK!</p>
+    <p v-show="ok">Show</p>
+    <br>
+
+    <h5>v-for</h5>
+    <ul>
+      <li v-for="(fruit, index) in fruits">{{index}} : {{ fruit }}</li>
+    </ul>
+    <ul>
+      <li v-for="(value, key, index) of object">{{index}} {{key}} : {{value}}</li>
+    </ul>
+    <br>
+
+    <h5>templateタグ②</h5>
+    <ul>
+      <template v-for="fruit of fruits">
+        <li>{{fruit}}</li>
+        <hr>
+      </template>
+    </ul>
+
+    <h5>v-forの整数値</h5>
+    <ul>
+      <li v-for="n of 10">{{n}}</li>
+    </ul>
+    <br>
+
+    <h5>v-forでは必ずkey属性を使用すること</h5>
+    <ul>
+      <div v-for="fruit in fruits" :key="fruit">
+        <p>{{fruit}}</p>
+        <input type="text">
+      </div>
+    </ul>
+    <button @click="remove">先頭を削除</button>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        ok: false,
+        maybeOk: true,
+        fruits: ['りんご', 'ばなな', 'ぶどう'],
+        object: {
+          firstName: '太郎',
+          lastName: '田中',
+          age: 21
+        }
+      },
+      methods: {
+        remove: function() {
+          this.fruits.shift()
+        }
+      }
+    })
+  </script>
+
+  <style>
+  </style>
+ </body>
+ </html>
