@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="vue.js"></script>
+
+  <div id="app1">
+    <p>{{message}}</p>
+    <p>{{name}}</p>
+    <button @click="name = 'ボタンから変更'">変更</button>
+  </div>
+
+  <div id="app2">
+    <p>{{message}}</p>
+    <p>{{myData}}</p>
+    <button @click="changeMessage1">インスタンス１のmessageを変更</button>
+  </div>
+
+  <div id="app3"></div>
+  <div id="app4"></div>
+
+  <div id="app5">
+    <h1>App5からこんにちは、{{name}}</h1>
+    <button @click="name = '太郎さん'">名前を変更</button>
+    <button @click="destroy">インスタンスを破壊</button>
+    <hello></hello>
+    <hello></hello>
+    <hello></hello>
+    <hello></hello>
+  </div>
+
+
+  <script>
+    var vm1 = new Vue({
+      el: '#app1',
+      data: {
+        message: 'インスタンス１',
+        name: 'sss',
+      },
+    })
+
+    vm1.message = '変えました'
+    // リアクティブにならない
+    vm1.name = 'よしぴー'
+
+    // ユーザが定義したものは$xxxで参照
+    console.log(vm1.$data)
+
+    var data = {
+      message: 'インスタンス２'
+    }
+
+    // コンポーネントの登録
+    Vue.component('hello', {
+      template: '<p>こんにちは</p>'
+    });
+
+    var vm2 = new Vue({
+      el: '#app2',
+      data: data,
+      methods: {
+        changeMessage1: function() {
+          vm1.message = 'インスタンス２から書き換えました'
+        }
+      },
+      computed: {
+        myData: function() {
+          return this.$data
+        }
+      }
+    })
+
+    var vm3 = new Vue({
+      data: {
+        name: 'よしぴー'
+      },
+      template: '<h1>こんにちは、{{name}}</h1>'
+    }).$mount('#app3')
+
+    var vm4 = new Vue({
+      data: {
+        name: 'よしぴー'
+      },
+      render: function(createElement) {
+        return createElement('h1', 'こんにちは' + this.name);
+      }
+    }).$mount('#app4')
+
+    var dir = document.createElement('div');
+    console.log(dir)
+
+    var vm5 = new Vue({
+      el: '#app5',
+      data: {
+        name: 'よしぴー'
+      },
+      beforeCreate: function() {
+        console.log('beforeCreate');
+      },
+      created: function() {
+        console.log('Created');
+      },
+      beforeMount: function() {
+        console.log('beforeMount');
+      },
+      mounted: function() {
+        console.log('mounted');
+      },
+      beforeUpdate: function() {
+        console.log('beforeUpdate');
+      },
+      updated: function() {
+        console.log('updated');
+      },
+      beforeDestroy: function() {
+        console.log('beforeDestroy');
+      },
+      destroyed: function() {
+        console.log('destroyed');
+      },
+      methods: {
+        destroy: function() {
+          // インスタンスを破壊vuejsを完全に削除する
+          this.$destroy()
+        }
+      }
+    })
+  </script>
+  <style>
+  </style>
+</body>
+</html>
