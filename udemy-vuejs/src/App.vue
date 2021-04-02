@@ -1,139 +1,220 @@
 <template>
-  <div>
-    <LikeHeader>
-      <h3>はじめまして</h3>
-    </LikeHeader>
-    <LikeNumber :total-number="number" test-props="test" @my-click="incrementNumber"></LikeNumber>
-    <button @click="currentComponent = 'Home'">Home</button>
-    <button @click="currentComponent = 'About'">About</button>
-    <keep-alive>
-      <component :is="currentComponent"></component>
-    </keep-alive>
-    <div style="padding: 10rem;">
-      <h2>イベントのフォーム</h2>
-      <EventTitle v-model="eventData.title"></EventTitle>
-      <label for="maxNumber">最大人数</label>
-      <input
-        id="title"
-        type="number"
-        v-model.number="eventData.maxNumber"
-      >
-      <p>{{ eventData.maxNumber }}</p>
+  <div class="main">
+    <button @click="myAnimation = 'slide'">Slide</button>
+    <button @click="myAnimation = 'fade'">Fade</button>
+    <p>{{ myAnimation }}</p>
+    <br>
 
-      <label for="host">主催者</label>
-      <input
-        id="host"
-        type="text"
-        v-model.trim="eventData.host"
-      >
-      <pre>{{ eventData.host }}</pre>
+    <button @click="add">追加</button>
+    <ul style="width: 200px; margin: auto;">
+      <transition-group name="fade" tag="div">
+        <li
+          style="cursor: pointer;"
+          v-for="(number, index) in numbers"
+          :key="number"
+          @click="remove(index)"
+        >{{ number }}</li>
+      </transition-group>
+    </ul>
 
-      <label for="detail">イベントの内容</label>
-      <textarea
-        id="detail"
-        cols="30"
-        rows="10"
-        v-model="eventData.detail"
-      ></textarea>
-      <p style="white-space: pre;">{{ eventData.detail }}</p>
+    <br>
+    <button @click="show = !show">切り替え</button>
 
-      <input
-        type="checkbox"
-        id="isPrivate"
-        v-model="eventData.isPrivate"
-      >
-      <label for="isPrivate">非公開</label>
-      <p>{{ eventData.isPrivate }}</p>
+    <br><br>
+    <transition
+      :css="false"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @enter-cancelled="enterCancelled"
+      @before-leave="beforeLeave"
+      @leave="leave"
+      @after-leave="afterLeave"
+      @leave-cancelled="leaveCancelled"
+    >
+      <div
+        class="circle"
+        v-if="show"></div>
+    </transition>    
 
-      <p>参加条件</p>
-      <input
-        type="checkbox"
-        id="10"
-        value="10代"
-        v-model="eventData.target"
-      >
-      <label for="10">10代</label>
+    <br>
+    <button @click="myComponent = 'ComponentA'">ComponentA</button>
+    <button @click="myComponent = 'ComponentB'">ComponentB</button>
+    <transition name="fade" mode="out-in">
+      <component :is="myComponent"></component>
+    </transition>
 
-      <input
-        type="checkbox"
-        id="20"
-        value="20代"
-        v-model="eventData.target"
-      >
-      <label for="20">20代</label>
-
-      <input
-        type="checkbox"
-        id="30"
-        value="30代"
-        v-model="eventData.target"
-      >
-      <label for="30">30代</label>
-      <p>{{eventData.target}}</p>
-
-      <p>参加費</p>
-      <input
-        type="radio"
-        id="free"
-        value="無料"
-        v-model="eventData.price"
-      >
-      <label for="free">無料</label>
-      <input
-        type="radio"
-        id="paid"
-        value="有料"
-        v-model="eventData.price"
-      >
-      <label for="paid">有料</label>
-
-      <p>開催場所</p>
-      <select v-model="eventData.location" multiple>
-        <option
-          v-for="location in locations"
-          :key="location">{{ location }}</option>
-      </select>
-      <p>{{ eventData.location }}</p>
-    </div>
+    <transition name="fade" mode="out-in">
+      <p v-if="show" key="bye">さよなら</p>
+      <p v-else key="hello">こんにちは</p>
+    </transition>
+    <transition
+      enter-active-class="animated bounce"
+      leave-active-class="animated shake"
+      apper
+    >
+      <p v-if="show">hello</p>
+    </transition>
+    <transition
+      :name="myAnimation"
+      appear
+    >
+      <p v-if="show">bye</p>
+    </transition>
   </div>
 </template>
 
 <script>
-import LikeHeader from "./components/LikeHeader.vue";
-import About from "./components/About.vue";
-import Home from "./components/Home.vue";
-import EventTitle from "./components/EventTitle.vue";
+import ComponentA from "./components/ComponentA.vue";
+import ComponentB from "./components/ComponentB.vue";
 
 export default {
-  // ローカルコンポーネント登録
   data() {
     return {
-      number: 14,
-      currentComponent: "Home",
-      locations: ["東京", "大阪", "名古屋"],
-      eventData: {
-        title: "",
-        maxNumber: 0,
-        host: "",
-        detail: "",
-        isPrivate: false,
-        target: [],
-        price: "無料",
-        location: ["東京"]
-      }
+      numbers: [0, 1, 2],
+      nextNumber: 3,
+      show: true,
+      myAnimation: 'slide',
+      myComponent: 'ComponentA'
     }
-  },
-  components: {
-    LikeHeader,
-    About,
-    Home,
-    EventTitle
   },
   methods: {
-    incrementNumber(value) {
-      // 個のコンポーネントの$emitの第二引数が入ってくるこの場合LikeNumberのthis.totalNumber++
-      this.number = value;
-    }
+    randomIndex() {
+      // 整数の部分だけを取る
+      return Math.floor(Math.random() * this.numbers.length);
+    },
+    add() {
+      this.numbers.splice(this.randomIndex(), 0, this.nextNumber);
+      this.nextNumber++;
+    },
+    remove(index) {
+      this.numbers.splice(index, 1);
+    },
+    beforeEnter(el) {
+      // 現れる前
+      // beforeEnterは最初のスタイルなんかをつける
+      el.style.transform = 'scale(0)';
+    },
+    enter(el, done) {
+      // 現れる時
+      // cssを使わない場合は必ずdoneをつける
+      let scale = 0;
+      const interval = setInterval(() => {
+        el.style.transform = `scale(${scale})`;
+        scale += 0.01
+        if (scale > 1) {
+          clearInterval(interval);
+          done();
+        }
+      }, 20);
+    },
+    afterEnter() {
+      // el引数
+      // 現れた後
+    },
+    enterCancelled() {
+      // el引数
+      // 現れるアニメーションがキャンセルされた時
+    },
+    beforeLeave() {
+      // el引数
+      // 消える前
+    },
+    leave(el, done) {
+      // 消える時
+      // cssを使わない場合は必ずdoneをつける
+      let scale = 1;
+      const interval = setInterval(() => {
+        el.style.transform = `scale(${scale})`;
+        scale -= 0.01
+        if (scale < 0) {
+          clearInterval(interval);
+          done();
+        }
+      }, 20);
+    },
+    afterLeave() {
+      // el引数
+      // 消えた後
+    },
+    leaveCancelled() {
+      // el引数
+      // 消えるアニメーションがキャンセルされた時
+      // v-showを使う時だけ実行される
+    },
+  },
+  components: {
+    ComponentA,
+    ComponentB
   }
 }
 </script>
+
+<style scoped>
+.circle {
+  width: 200px;
+  height: 200px;
+  margin: auto;
+  border-radius: 100px;
+  background-color: deeppink;
+}
+
+.fade-move {
+  transition: transform 1s;
+}
+.fade-enter {
+  /* 現れる時の最初の状態 */
+  opacity: 0;
+}
+.fade-enter-active {
+  /* 現れる時のトランジションの状態 */
+  transition: opacity 0.5s;
+}
+.fade-enter-to {
+  /* 現れる時の最後の状態 */
+  opacity: 1;
+}
+.fade-leave {
+  /* 消える時の最初の状態 */
+  opacity: 1;
+}
+.fade-leave-active {
+  /* 消える時のトランジションの状態 */
+  transition: opacity 0.5s;
+  position: absolute;
+  width: 200px;
+}
+.fade-leave-to {
+  /* 消える時の最後の状態 */
+  opacity: 0;
+}
+
+.slide-enter,
+.slide-leave-to {
+  opacity: 0;
+}
+.slide-enter-active {
+  animation: slide-in 0.5s;
+  transition: opacity 1s;
+}
+.slide-leave-active {
+  animation: slide-in 0.5s reverse;
+  transition: opacity 1s;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.main {
+  width: 70%;
+  margin: auto;
+  padding-top: 5rem;
+  text-align: center;
+}
+</style>

@@ -6,7 +6,7 @@ import LikeNumber from './components/LikeNumber.vue';
 Vue.config.productionTip = false
 // グローバルコンポーネント登録
 Vue.component('LikeNumber', LikeNumber);
-// カスタムディレクティブ
+// グローバルカスタムディレクティブ
 // Vue.directive("border", function (el, binding) {
 //   el.style.borderWidth = binding.value.width;
 //   el.style.borderColor = binding.value.color;
@@ -20,6 +20,19 @@ Vue.component('LikeNumber', LikeNumber);
 //     el.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.26)";
 //   }
 // });
+
+// グローバルフィルター
+Vue.filter("upperCase", function(value) {
+  console.log("フィルター");
+  return value.toUpperCase();
+});
+
+// グローバルミックスイン
+// Vue.mixin({
+//   created() {
+//     console.log("global mixin");
+//   }
+// })
 
 // vueファイルはimportして使う。importするとコンポーネントのオブジェクトを返す
 console.log(App);
