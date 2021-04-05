@@ -1,84 +1,53 @@
 <template>
   <div id="app">
-    <h3>掲示板に投稿する</h3>
-    <label for="name">ニックネーム：</label>
-    <input
-      id="name"
-      type="text"
-      v-model="name"
-    >
-    <br><br>
-    <label for="comment">コメント：</label>
-    <textarea
-      id="comment"
-      v-model="comment"
-    ></textarea>
-    <br><br>
-    <button @click="createComment">コメントをサーバーに送る</button>
-    <h2>掲示板</h2>
-    <div v-for="post in posts" :key="post.name">
-      <br>
-      <div>名前：{{ post.fields.name.stringValue }}</div>
-      <div>コメント：{{ post.fields.comment.stringValue }}</div>
-    </div>
+    <header>
+      <template v-if="isAuthenticated">
+        <router-link
+          to="/"
+          class="header-item"
+        >掲示板</router-link>
+        <span
+          @click="logout"
+          class="header-item"
+        >ログアウト</span>
+      </template>
+      <template v-if="!isAuthenticated">
+        <router-link
+          to="/login"
+          class="header-item"
+        >ログイン</router-link>
+        <router-link
+          to="/register"
+          class="header-item"
+        >登録</router-link>
+      </template>
+    </header>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-// import axios from "axios";
-import axios from "./axios-auth";
-
 export default {
-  data() {
-    return {
-      name: "",
-      comment: "",
-      posts: []
-    };
-  },
-  created() {
-    axios.get(
-      "/comments"
-    )
-    .then(response => {
-      this.posts = response.data.documents
-      console.log(response);
-    })
-    .catch(error => {
-      console.log(error);
-    });
+  computed: {
+    isAuthenticated() {
+      // トークンがある場合認証済み(true)
+      return this.$store.getters.idToken !== null;
+    }
   },
   methods: {
-    createComment() {
-      axios
-        .post(
-          "/comments",
-          {
-            fields: {
-              name: {
-                stringValue: this.name
-              },
-              comment: {
-                stringValue: this.comment
-              }
-            }
-          }
-        )
-        .then(response => {
-          // 非同期処理の考えで処理が重いため先にやっといて.then
-          console.log(response);
-        })
-        .catch(error => {
-          // エラーの場合
-          console.log(error);
-        });
-      this.name = "";
-      this.comment = "";
+    logout() {
+      this.$store.dispatch('logout');
     }
   }
 }
 </script>
 
+<style scoped>
+.header-item {
+  cursor: pointer;
+  padding: 10px;
+}
+</style>
 
 <style>
 #app {
