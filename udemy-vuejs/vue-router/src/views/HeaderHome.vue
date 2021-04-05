@@ -13,8 +13,30 @@
         exact
         class="link"
       >Users</router-link>
+      <!-- mapMutationsヘルパーでmutationsnのincrementを呼ぶ<button @click="increment(2)">+1</button> -->
+      <button @click="increment">+1</button>
+      <button @click="decrement(2)">-1</button>
     </nav>
 </template>
+
+<script>
+import { mapMutations } from "vuex";
+export default {
+  methods: {
+    ...mapMutations(["increment", "decrement"]),
+    increment() {
+      // mutationsのincrementを呼ぶ
+      // this.$store.commit("increment", 2);
+      // actionsのincrementを呼ぶ
+      this.$store.dispatch('increment', 2);
+    },
+    decrement() {
+      this.$store.commit("decrement", 2);
+    }
+  }
+}
+</script>
+
 
 <style scoped>
   .link {
